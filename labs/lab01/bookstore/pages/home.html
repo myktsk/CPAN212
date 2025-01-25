@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bookstore</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        min-height: 100vh;
+      }
+      header {
+        height: 80px;
+        background-color: #333;
+        color: white;
+        padding: 15px;
+      }
+      nav ul {
+        list-style: none;
+        padding: 0;
+      }
+      nav ul li {
+        display: inline;
+        margin: 0 15px;
+      }
+      nav ul li a {
+        color: white;
+        text-decoration: none;
+        background-color: transparent;
+      }
+      main {
+        padding: 20px;
+        min-height: calc(100vh - 160px);
+      }
+      section {
+        margin: 20px 0;
+      }
+      footer {
+        background-color: #333;
+        color: white;
+        padding: 10px;
+        height: 80px;
+      }
+
+      a {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 10px;
+        background-color: #007bff;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+      }
+
+      a:hover {
+        background-color: #0056b3;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li><a href="/">Home</a></li>
+          <li><a href="/about">About</a></li>
+          <li><a href="/book">Book 1</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section id="home">
+        <h1>Welcome to Our Bookstore</h1>
+        <p>Discover a wide selection of books for every taste.</p>
+        <ul>
+          <li>
+            <strong>Best Sellers:</strong> "The Silent Patient" by Alex
+            Michaelides, "Where the Crawdads Sing" by Delia Owens.
+          </li>
+          <li>
+            <strong>New Arrivals:</strong> "The House of Fortune" by Jessie
+            Burton, "Tomorrow, and Tomorrow, and Tomorrow" by Gabrielle Zevin.
+          </li>
+          <li>
+            <strong>Genres:</strong> Fiction, Non-Fiction, Mystery, Sci-Fi,
+            Fantasy, Romance.
+          </li>
+        </ul>
+      </section>
+    </main>
+
+    <footer>
+      <p>&copy; 2025 Bookstore. All Rights Reserved.</p>
+    </footer>
+  </body>
+</html>
