@@ -7,9 +7,9 @@ const App = () => {
   const [multipleImagesDisplayUrls, setMultipleImagesDisplayUrls] = useState(
     []
   );
+  const [dogImageDisplayUrl, setDogImageDisplayUrl] = useState(null);
 
   const [singleFile, setSingleFile] = useState(null);
-  const [multipleFiles, setMultipleFiles] = useState([]);
 
   const [message, setMessage] = useState("");
 
@@ -83,7 +83,18 @@ const App = () => {
       console.error("Error fetching multiple files:", error);
     }
   };
-  // fetch functions -> fetch dog image [TODO]
+
+  const fetchDogImage = async () => {
+    try {
+      const response = await fetch(`https://dog.ceo/api/breeds/image/random`);
+      const data = await response.json();
+      console.log(data);
+      setDogImageDisplayUrl(data.message);
+    } catch (error) {
+      console.error("Error fetching dog image:", error);
+    }
+  };
+
   // fetch functions -> save dog image [TODO]
 
   return (
@@ -125,6 +136,20 @@ const App = () => {
                 </li>
               ))}
             </ul>
+          </div>
+        )}
+      </section>
+      <section>
+        <h2>Fetch Dog Image</h2>
+        <button onClick={fetchDogImage}>Fetch Dog Image</button>
+        {dogImageDisplayUrl && (
+          <div>
+            <h3>Dog Image</h3>
+            <img
+              src={dogImageDisplayUrl}
+              alt="Dog Image"
+              style={{ width: "200px", marginTop: "10px" }}
+            />
           </div>
         )}
       </section>
