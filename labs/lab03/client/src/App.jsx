@@ -20,33 +20,26 @@ const App = () => {
     }
   };
 
+  const getBlobUrl = async (url) => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  };
+
   // fetch functions -> fetch a random single image
   const fetchSingleFile = async () => {
     try {
-      const response = await fetch(`${BASE_URL}fetch/single`);
-
-      const blob = await response.blob(); // we made a blob - Binary Large Object
-      // but thats not an image, so we need to make an image element
-
-      // using createObjectURL
-      const imageUrl = URL.createObjectURL(blob);
+      const imageUrl = await getBlobUrl(`${BASE_URL}fetch/single`);
       setSingleImageDisplayUrl(imageUrl);
     } catch (error) {
       console.error("Error fetching single file:", error);
     }
   };
 
-  // fetch functions -> save single
-  const handleSubmitSingleFile = async (e) => {
-    e.preventDefault();
-    if (!singleFile) {
-      setMessage("Please select a file before uploading.");
-      return;
-    }
-
+  const uploadFileToServer = async (file) => {
     try {
       const formData = new FormData();
-      formData.append("file", singleFile);
+      formData.append("file", file);
 
       const response = await fetch(`${BASE_URL}save/single`, {
         method: "POST",
@@ -64,20 +57,27 @@ const App = () => {
     }
   };
 
+  // fetch functions -> save single
+  const handleSubmitSingleFile = async (e) => {
+    e.preventDefault();
+    if (!singleFile) {
+      setMessage("Please select a file before uploading.");
+      return;
+    }
+
+    uploadFileToServer(singleFile);
+  };
+
   const fetchMultipleFiles = async () => {
     try {
       const response = await fetch(`${BASE_URL}fetch/multiple`);
       const fileNames = await response.json();
 
-      const blobs = await Promise.all(
+      const imageUrls = await Promise.all(
         fileNames.map((fileName) =>
-          fetch(`${BASE_URL}fetch/file/${fileName}`).then((response) =>
-            response.blob()
-          )
+          getBlobUrl(`${BASE_URL}fetch/file/${fileName}`)
         )
       );
-
-      const imageUrls = blobs.map((blob) => URL.createObjectURL(blob));
       setMultipleImagesDisplayUrls(imageUrls);
     } catch (error) {
       console.error("Error fetching multiple files:", error);
@@ -103,25 +103,9 @@ const App = () => {
     // create a blob from the image URL
     const response = await fetch(dogImageDisplayUrl);
     const blob = await response.blob();
-    //attach as file to form data with timestamp name
-    const formData = new FormData();
-    formData.append("file", blob, `${Date.now()}.jpg`);
-
-    try {
-      const response = await fetch(`${BASE_URL}save/single`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || "Image upload failed");
-      }
-      setMessage("Dog image uploaded successfully!");
-    } catch (error) {
-      console.error("Error uploading dog image:", error);
-    }
+    //create a file data with timestamp name
+    const file = new File([blob], `${Date.now()}.jpg`, { type: "image/jpeg" });
+    uploadFileToServer(file);
   };
 
   return (
