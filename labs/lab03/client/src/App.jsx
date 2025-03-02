@@ -48,7 +48,7 @@ const App = () => {
       const formData = new FormData();
       formData.append("file", singleFile);
 
-      const response = await fetch(`http://localhost:8000/save/single`, {
+      const response = await fetch(`${BASE_URL}save/single`, {
         method: "POST",
         body: formData,
       });
@@ -88,14 +88,41 @@ const App = () => {
     try {
       const response = await fetch(`https://dog.ceo/api/breeds/image/random`);
       const data = await response.json();
-      console.log(data);
       setDogImageDisplayUrl(data.message);
     } catch (error) {
       console.error("Error fetching dog image:", error);
     }
   };
 
-  // fetch functions -> save dog image [TODO]
+  const uploadDogImageToServer = async () => {
+    if (!dogImageDisplayUrl) {
+      setMessage("Please fetch a dog image before uploading.");
+      return;
+    }
+
+    // create a blob from the image URL
+    const response = await fetch(dogImageDisplayUrl);
+    const blob = await response.blob();
+    //attach as file to form data with timestamp name
+    const formData = new FormData();
+    formData.append("file", blob, `${Date.now()}.jpg`);
+
+    try {
+      const response = await fetch(`${BASE_URL}save/single`, {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Image upload failed");
+      }
+      setMessage("Dog image uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading dog image:", error);
+    }
+  };
 
   return (
     <div className="container">
@@ -148,8 +175,9 @@ const App = () => {
             <img
               src={dogImageDisplayUrl}
               alt="Dog Image"
-              style={{ width: "200px", marginTop: "10px" }}
+              style={{ width: "200px", margin: "10px", display: "block" }}
             />
+            <button onClick={uploadDogImageToServer}>Upload Dog Image</button>
           </div>
         )}
       </section>
