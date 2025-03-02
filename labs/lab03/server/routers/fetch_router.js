@@ -27,14 +27,29 @@ router.get("/single", (req, res) => {
   res.sendFile(path.join(upload_directory, filename));
 });
 
-// helper function for multiple 
+// helper function for multiple
 router.get("/file/:filename", (req, res) => {
-  res.sendFile(path.join(__dirname, "../uploads", req.params.filename));
+  res.sendFile(path.join(upload_directory, req.params.filename));
 });
 
-// TO DO, send array of filenames [TODO]
+// send array of filenames
+const MAX_IMAGE_FILE_COUNT = 3;
 router.get("/multiple", (req, res) => {
-  res.send("TODO");
+  const length =
+    req.query.count && req.query.count <= MAX_IMAGE_FILE_COUNT
+      ? req.query.count
+      : MAX_IMAGE_FILE_COUNT;
+  let files_array = fs.readdirSync(upload_directory);
+
+  if (files_array.length == 0) {
+    return res.status(503).send({
+      message: "No images",
+    });
+  }
+  //use sampleSize to get a random sample of the array
+  let random_files = _.sampleSize(files_array, 3);
+
+  res.send(random_files);
 });
 
 export default router;

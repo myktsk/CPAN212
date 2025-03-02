@@ -1,10 +1,16 @@
 import { useState } from "react";
 
+const BASE_URL = "http://localhost:8000/";
+
 const App = () => {
-  // what do we need to track
+  const [singleImageDisplayUrl, setSingleImageDisplayUrl] = useState(null);
+  const [multipleImagesDisplayUrls, setMultipleImagesDisplayUrls] = useState(
+    []
+  );
+
   const [singleFile, setSingleFile] = useState(null);
   const [multipleFiles, setMultipleFiles] = useState([]);
-  const [displayImage, setDisplayImage] = useState(null);
+
   const [message, setMessage] = useState("");
 
   // Handlers
@@ -17,14 +23,14 @@ const App = () => {
   // fetch functions -> fetch a random single image
   const fetchSingleFile = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/fetch/single`);
+      const response = await fetch(`${BASE_URL}fetch/single`);
 
       const blob = await response.blob(); // we made a blob - Binary Large Object
       // but thats not an image, so we need to make an image element
 
       // using createObjectURL
       const imageUrl = URL.createObjectURL(blob);
-      setDisplayImage(imageUrl);
+      setSingleImageDisplayUrl(imageUrl);
     } catch (error) {
       console.error("Error fetching single file:", error);
     }
@@ -41,7 +47,7 @@ const App = () => {
     try {
       const formData = new FormData();
       formData.append("file", singleFile);
-      
+
       const response = await fetch(`http://localhost:8000/save/single`, {
         method: "POST",
         body: formData,
@@ -58,31 +64,70 @@ const App = () => {
     }
   };
 
-  // fetch functions -> save multiple [TODO]
-  // fetch functions -> fetch multiple [TODO]
+  const fetchMultipleFiles = async () => {
+    try {
+      const response = await fetch(`${BASE_URL}fetch/multiple`);
+      const fileNames = await response.json();
+
+      const blobs = await Promise.all(
+        fileNames.map((fileName) =>
+          fetch(`${BASE_URL}fetch/file/${fileName}`).then((response) =>
+            response.blob()
+          )
+        )
+      );
+
+      const imageUrls = blobs.map((blob) => URL.createObjectURL(blob));
+      setMultipleImagesDisplayUrls(imageUrls);
+    } catch (error) {
+      console.error("Error fetching multiple files:", error);
+    }
+  };
   // fetch functions -> fetch dog image [TODO]
   // fetch functions -> save dog image [TODO]
 
   return (
-    <div>
+    <div className="container">
       <p>{message}</p>
-      <h2>Fetch Single Random Image</h2>
-      <button onClick={fetchSingleFile}>Fetch Single File</button>
-      {displayImage && (
-        <div>
-          <h3>Single File</h3>
-          <img
-            src={displayImage}
-            alt="Display Image"
-            style={{ width: "200px", marginTop: "10px" }}
-          />
-        </div>
-      )}
-      <form onSubmit={handleSubmitSingleFile}>
-        <h2>Upload Single File</h2>
-        <input type="file" onChange={handleSingleFileChange} />
-        <button type="submit">Upload Single File</button>
-      </form>
+      <section>
+        <h2>Fetch Single Random Image</h2>
+        <button onClick={fetchSingleFile}>Fetch Single File</button>
+        {singleImageDisplayUrl && (
+          <div>
+            <h3>Single File</h3>
+            <img
+              src={singleImageDisplayUrl}
+              alt="Display Image"
+              style={{ width: "200px", marginTop: "10px" }}
+            />
+          </div>
+        )}
+        <form onSubmit={handleSubmitSingleFile}>
+          <h2>Upload Single File</h2>
+          <input type="file" onChange={handleSingleFileChange} />
+          <button type="submit">Upload Single File</button>
+        </form>
+      </section>
+      <section>
+        <h2>Fetch Multiple Files</h2>
+        <button onClick={fetchMultipleFiles}>Fetch Multiple Files</button>
+        {multipleImagesDisplayUrls.length > 0 && (
+          <div>
+            <h3>Multiple Files</h3>
+            <ul className="imageContainer">
+              {multipleImagesDisplayUrls.map((url, index) => (
+                <li key={index}>
+                  <img
+                    src={url}
+                    alt={`Display Image ${index}`}
+                    style={{ width: "200px", marginTop: "10px" }}
+                  />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </section>
     </div>
   );
 };
