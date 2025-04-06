@@ -22,6 +22,16 @@
   --font-mono: var(--font-geist-mono);
 }
 
+@layer components {
+  .icon {
+    @apply text-xl;
+  }
+
+  .button {
+    @apply block w-full px-4 py-2 font-bold tracking-wider text-center transition-colors rounded text-foreground bg-accent hover:bg-accent-hover hover:no-underline;
+  }
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
