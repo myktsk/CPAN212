@@ -57,6 +57,18 @@
   h4 {
     @apply text-xl;
   }
+
+  form {
+    @apply p-4 rounded-xl;
+  }
+  label {
+    @apply mt-4;
+  }
+  input,
+  select,
+  textarea {
+    @apply p-1 m-1 rounded bg-card;
+  }
 }
 
 body {
