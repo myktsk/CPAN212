@@ -4,16 +4,7 @@ import DeleteBlock from "./DeleteBlock";
 import ProgressDisplay from "./ProgressDisplay";
 import Link from "next/link";
 
-const TicketCard = () => {
-  const ticket = {
-    _id: "12345",
-    title: "Sample Ticket",
-    description: "This is a sample ticket description.",
-    createdAt: "2023-10-01T12:00:00Z",
-    priority: "high",
-    progress: 50,
-    status: "done",
-  };
+const TicketCard = ({ ticket }) => {
   function formatTimestamp(timestamp) {
     const options = {
       year: "numeric",
